@@ -10,6 +10,7 @@ import Workout from "./pages/Workout";
 import Progress from "./pages/Progress";
 import Achievements from "./pages/Achievements";
 import Leaderboard from "./pages/Leaderboard";
+import AiPlanner from "./pages/AiPlanner";
 
 // Protected route wrapper
 function ProtectedLayout({ children }) {
@@ -65,6 +66,10 @@ export default function App() {
           <Route
             path="/leaderboard"
             element={<ProtectedLayout><Leaderboard /></ProtectedLayout>}
+          />
+          <Route
+            path="/ai-planner"
+            element={<ProtectedLayout><AiPlanner /></ProtectedLayout>}
           />
 
           {/* Fallback */}

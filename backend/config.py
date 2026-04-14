@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     secret_key: str = "changeme-use-a-long-random-string"
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 10080  # 7 days
+    gemini_api_key: str = ""  # Get a free key at https://aistudio.google.com/apikey
 
     class Config:
         env_file = ".env"

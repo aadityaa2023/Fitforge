@@ -52,3 +52,10 @@ export const progressApi = {
     return data;
   },
 };
+
+export const aiPlannerApi = {
+  generatePlan: async (workoutStats = {}) => {
+    const { data } = await api.post("/api/ai-planner/generate", workoutStats);
+    return data;
+  },
+};

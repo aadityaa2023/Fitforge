@@ -14,11 +14,13 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { useAuth } from "../context/AuthContext";
 
 const NAV_ITEMS = [
   { label: "Dashboard", icon: <DashboardIcon />, path: "/dashboard" },
   { label: "Workout", icon: <FitnessCenterIcon />, path: "/workout" },
+  { label: "AI Planner", icon: <AutoAwesomeIcon />, path: "/ai-planner", highlight: true },
   { label: "Progress", icon: <ShowChartIcon />, path: "/progress" },
   { label: "Achievements", icon: <EmojiEventsIcon />, path: "/achievements" },
   { label: "Leaderboard", icon: <LeaderboardIcon />, path: "/leaderboard" },
@@ -112,7 +114,7 @@ export default function Navbar() {
 
       {/* Navigation links */}
       <List sx={{ flex: 1, px: 1, py: 1.5 }}>
-        {NAV_ITEMS.map(({ label, icon, path }) => {
+        {NAV_ITEMS.map(({ label, icon, path, highlight }) => {
           const isActive = location.pathname === path;
           return (
             <ListItem key={path} disablePadding sx={{ mb: 0.5 }}>
@@ -127,8 +129,14 @@ export default function Navbar() {
                     justifyContent: open ? "initial" : "center",
                     background: isActive
                       ? "linear-gradient(135deg,rgba(0,230,118,0.15),rgba(124,77,255,0.1))"
+                      : highlight
+                      ? "rgba(124,77,255,0.08)"
                       : "transparent",
-                    border: isActive ? "1px solid rgba(0,230,118,0.25)" : "1px solid transparent",
+                    border: isActive
+                      ? "1px solid rgba(0,230,118,0.25)"
+                      : highlight
+                      ? "1px solid rgba(124,77,255,0.2)"
+                      : "1px solid transparent",
                     "&:hover": {
                       background: "rgba(0,230,118,0.08)",
                       border: "1px solid rgba(0,230,118,0.15)",
@@ -137,7 +145,11 @@ export default function Navbar() {
                 >
                   <ListItemIcon
                     sx={{
-                      color: isActive ? "primary.main" : "text.secondary",
+                      color: isActive
+                        ? "primary.main"
+                        : highlight
+                        ? "secondary.main"
+                        : "text.secondary",
                       minWidth: open ? 40 : "unset",
                     }}
                   >
@@ -147,8 +159,8 @@ export default function Navbar() {
                     <ListItemText
                       primary={label}
                       primaryTypographyProps={{
-                        fontWeight: isActive ? 700 : 500,
-                        color: isActive ? "primary.main" : "text.secondary",
+                        fontWeight: isActive ? 700 : highlight ? 700 : 500,
+                        color: isActive ? "primary.main" : highlight ? "secondary.main" : "text.secondary",
                         fontSize: "0.9rem",
                       }}
                     />

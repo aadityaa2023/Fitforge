@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from database import close_connection
-from routers import auth, workout, gamification, progress, websocket_router
+from routers import auth, workout, gamification, progress, websocket_router, ai_planner
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -43,6 +43,7 @@ app.include_router(workout.router)
 app.include_router(gamification.router)
 app.include_router(progress.router)
 app.include_router(websocket_router.router)
+app.include_router(ai_planner.router)
 
 
 @app.get("/", tags=["health"])
