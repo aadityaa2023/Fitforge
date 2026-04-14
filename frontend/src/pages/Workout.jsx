@@ -4,8 +4,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box, Grid, Card, CardContent, Typography, Button, Select,
   MenuItem, FormControl, InputLabel, Divider, Chip, CircularProgress,
-  Dialog, DialogContent, DialogTitle, DialogActions,
-  Snackbar, Alert, Tooltip, Switch, FormControlLabel,
+  Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText,
+  Snackbar, Alert, Tooltip, Switch, FormControlLabel, IconButton,
+  Slider
 } from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import StopIcon from "@mui/icons-material/Stop";
@@ -18,14 +19,19 @@ import CameraFeed from "../components/CameraFeed";
 import RepCounter from "../components/RepCounter";
 import FeedbackBanner from "../components/FeedbackBanner";
 import { workoutApi } from "../services/auth";
-import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
 import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
+import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import TimerIcon from "@mui/icons-material/Timer";
+import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 import LightbulbIcon from "@mui/icons-material/Lightbulb";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
+import CalculateIcon from "@mui/icons-material/Calculate";
+import CloudOffIcon from "@mui/icons-material/CloudOff";
+import PlateCalculator from "../components/PlateCalculator";
 import { useVoiceCoach } from "../hooks/useVoiceCoach";
+import { saveWorkoutOffline } from "../utils/offlineSync";
 
 const EXERCISES = [
   { value: "squat",  label: "Squats",      icon: <DirectionsRunIcon /> },
@@ -48,6 +54,13 @@ export default function Workout() {
   const [saving, setSaving] = useState(false);
   const [snack, setSnack] = useState({ open: false, message: "", severity: "success" });
   const [summaryOpen, setSummaryOpen] = useState(false);
+  const [plateCalcOpen, setPlateCalcOpen] = useState(false);
+  const [restTimerOpen, setRestTimerOpen] = useState(false);
+  const [restTarget, setRestTarget] = useState(60);
+  const [restElapsed, setRestElapsed] = useState(0);
+  const [isResting, setIsResting] = useState(false);
+  const restIntervalRef = useRef(null);
+
   const [lastResult, setLastResult] = useState(null);
 
   // Voice coach state — on by default so it "wows" on first demo
@@ -57,7 +70,7 @@ export default function Workout() {
   const repCountRef = useRef(0);
 
   // Voice AI Coach hook
-  const { announceExerciseStart, processPoseResult, announceWorkoutEnd, stop: stopVoice } =
+  const { speak, announceExerciseStart, processPoseResult, announceWorkoutEnd, stop: stopVoice } =
     useVoiceCoach(voiceEnabled);
 
   const handlePoseResult = useCallback(
@@ -99,14 +112,50 @@ export default function Workout() {
     announceExerciseStart(exercise);
   };
 
+  const resumeWorkout = () => {
+    if (isResting) stopRest();
+    setIsRunning(true);
+    timerRef.current = setInterval(() => setElapsed((p) => p + 1), 1000);
+    speak("Resuming, let's keep going!");
+  };
+
   const stopWorkout = () => {
     setIsRunning(false);
     clearInterval(timerRef.current);
     stopVoice();
   };
 
+  const startRest = () => {
+    stopWorkout();
+    setIsResting(true);
+    setRestElapsed(0);
+    setRestTimerOpen(true);
+    speak(`Resting for ${restTarget} seconds. Take a breather.`);
+
+    restIntervalRef.current = setInterval(() => {
+      setRestElapsed((p) => {
+        if (p + 1 >= restTarget) {
+          stopRest(true);
+          return p + 1;
+        }
+        return p + 1;
+      });
+    }, 1000);
+  };
+
+  const stopRest = (autoFinished = false) => {
+    clearInterval(restIntervalRef.current);
+    setIsResting(false);
+    setRestTimerOpen(false);
+    setRestElapsed(0);
+    if (autoFinished) {
+      speak("Rest complete. Let's get back to work!", { rate: 1.05, pitch: 1.1, priority: true });
+    }
+  };
+
   const resetWorkout = () => {
     stopWorkout();
+    stopRest();
     setElapsed(0);
     setPoseData(null);
     setFeedbackLog([]);
@@ -127,19 +176,35 @@ export default function Workout() {
       // Announce end via voice before saving
       announceWorkoutEnd(repCountRef.current);
 
-      const result = await workoutApi.completeWorkout({
+      const payload = {
         exercise,
         reps: repCountRef.current,
         duration_seconds: elapsed,
         avg_form_score: avgFormScore,
         feedback_log: feedbackLog.slice(-10),
         perfect_reps: perfectReps,
-      });
+      };
+
+      const result = await workoutApi.completeWorkout(payload);
       setLastResult(result);
       setSummaryOpen(true);
       resetWorkout();
-    } catch {
-      setSnack({ open: true, message: "Failed to save workout", severity: "error" });
+    } catch (err) {
+      if (!navigator.onLine || err.message === "Network Error" || err.code === "ERR_NETWORK") {
+        saveWorkoutOffline({
+          exercise,
+          reps: repCountRef.current,
+          duration_seconds: elapsed,
+          avg_form_score: avgFormScore,
+          feedback_log: feedbackLog.slice(-10),
+          perfect_reps: perfectReps,
+        });
+        setSnack({ open: true, message: "Offline. Workout saved locally and will sync later!", severity: "info" });
+        setSummaryOpen(true);
+        resetWorkout();
+      } else {
+        setSnack({ open: true, message: "Failed to save workout", severity: "error" });
+      }
     } finally {
       setSaving(false);
     }
@@ -240,6 +305,13 @@ export default function Workout() {
               border: isRunning ? "1px solid rgba(0,230,118,0.4)" : "1px solid transparent",
             }}
           />
+
+          {/* Plate Calculator Button */}
+          <Tooltip title="Plate Calculator">
+            <IconButton onClick={() => setPlateCalcOpen(true)} sx={{ bgcolor: "rgba(255,255,255,0.08)" }}>
+              <CalculateIcon color="primary" />
+            </IconButton>
+          </Tooltip>
         </Box>
       </Box>
 
@@ -407,8 +479,8 @@ export default function Workout() {
             </Card>
 
             {/* Control buttons */}
-            <Box sx={{ display: "flex", gap: 1.5 }}>
-              {!isRunning ? (
+            <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
+              {!isRunning && elapsed === 0 ? (
                 <Button
                   id="start-workout-btn"
                   variant="contained"
@@ -420,17 +492,18 @@ export default function Workout() {
                 >
                   Start Workout
                 </Button>
-              ) : (
-                <>
+              ) : !isRunning && elapsed > 0 ? (
+                <Box sx={{ display: "flex", gap: 1.5, width: "100%" }}>
                   <Button
-                    id="stop-workout-btn"
-                    variant="outlined"
+                    id="resume-workout-btn"
+                    variant="contained"
                     size="large"
-                    startIcon={<StopIcon />}
-                    onClick={stopWorkout}
-                    sx={{ flex: 1, py: 1.5, borderColor: "rgba(255,255,255,0.2)" }}
+                    color="primary"
+                    startIcon={<PlayArrowIcon />}
+                    onClick={resumeWorkout}
+                    sx={{ flex: 1, py: 1.5 }}
                   >
-                    Pause
+                    Resume
                   </Button>
                   <Button
                     id="save-workout-btn"
@@ -443,17 +516,55 @@ export default function Workout() {
                   >
                     {saving ? <CircularProgress size={20} color="inherit" /> : "Save & Finish"}
                   </Button>
-                </>
+                </Box>
+              ) : (
+                <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap", width: "100%" }}>
+                  <Button
+                    id="stop-workout-btn"
+                    variant="contained"
+                    color="warning"
+                    size="large"
+                    startIcon={<StopIcon />}
+                    onClick={stopWorkout}
+                    sx={{ flex: 1, py: 1.5 }}
+                  >
+                    Pause
+                  </Button>
+                  <Button
+                    id="rest-btn"
+                    variant="outlined"
+                    size="large"
+                    startIcon={<HourglassEmptyIcon />}
+                    onClick={startRest}
+                    sx={{ flex: 1, py: 1.5, borderColor: "rgba(255,255,255,0.2)" }}
+                  >
+                    Rest
+                  </Button>
+                  <Button
+                    id="save-workout-btn"
+                    variant="contained"
+                    color="secondary"
+                    size="large"
+                    onClick={saveWorkout}
+                    disabled={saving || repCountRef.current === 0}
+                    sx={{ flex: 1, py: 1.5 }}
+                  >
+                    {saving ? <CircularProgress size={20} color="inherit" /> : "Finish"}
+                  </Button>
+                </Box>
               )}
+              
               {(isRunning || elapsed > 0) && (
                 <Button
                   id="reset-workout-btn"
                   variant="outlined"
                   size="large"
-                  sx={{ px: 2, borderColor: "rgba(255,255,255,0.1)", color: "text.secondary" }}
+                  fullWidth
+                  sx={{ py: 1, borderColor: "rgba(255,255,255,0.1)", color: "text.secondary" }}
                   onClick={resetWorkout}
+                  startIcon={<RestartAltIcon />}
                 >
-                  <RestartAltIcon />
+                  Reset Entire Workout
                 </Button>
               )}
             </Box>
@@ -560,6 +671,17 @@ export default function Workout() {
               </Typography>
             </Box>
           )}
+          {!lastResult && !navigator.onLine && (
+            <Box sx={{ textAlign: "center", py: 4 }}>
+              <CloudOffIcon sx={{ fontSize: 48, color: "text.secondary", mb: 2 }} />
+              <Typography variant="h5" fontWeight={800} color="primary.main" mb={1}>
+                Workout Saved Offline!
+              </Typography>
+              <Typography color="text.secondary">
+                You are currently offline. Your data has been securely saved on your device and will automatically sync the next time you connect.
+              </Typography>
+            </Box>
+          )}
         </DialogContent>
         <DialogActions sx={{ pb: 3, px: 3, gap: 1 }}>
           <Button
@@ -575,6 +697,67 @@ export default function Workout() {
         </DialogActions>
       </Dialog>
 
+      {/* Rest Timer Dialog */}
+      <Dialog 
+        open={restTimerOpen} 
+        onClose={() => stopRest(false)}
+        PaperProps={{
+          sx: { background: "rgba(18,18,26,0.98)", borderRadius: 4, minWidth: 280, textAlign: "center", p: 2 }
+        }}
+      >
+        <DialogTitle sx={{ display: "flex", flexDirection: "column", gap: 1, alignItems: "center" }}>
+          <HourglassEmptyIcon sx={{ fontSize: 40, color: "secondary.main" }} />
+          <Typography variant="h5" fontWeight={800}>Rest Time</Typography>
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ position: "relative", display: "inline-flex", mb: 3 }}>
+            <CircularProgress 
+              variant="determinate" 
+              value={100} 
+              size={120} 
+              sx={{ color: "rgba(255,255,255,0.05)", position: "absolute" }} 
+              thickness={4} 
+            />
+            <CircularProgress 
+              variant="determinate" 
+              value={(restElapsed / restTarget) * 100} 
+              size={120} 
+              color="secondary" 
+              thickness={4} 
+            />
+            <Box
+              sx={{
+                top: 0, left: 0, bottom: 0, right: 0,
+                position: "absolute",
+                display: "flex", alignItems: "center", justifyContent: "center"
+              }}
+            >
+              <Typography variant="h4" fontWeight={900} color="text.primary">
+                {restTarget - restElapsed}s
+              </Typography>
+            </Box>
+          </Box>
+          <Typography color="text.secondary" gutterBottom>
+            Adjust Target Duration (s)
+          </Typography>
+          <Slider
+            value={restTarget}
+            onChange={(_, v) => setRestTarget(v)}
+            step={15}
+            marks
+            min={15}
+            max={180}
+            color="secondary"
+            sx={{ px: 2 }}
+          />
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
+          <Button onClick={() => stopRest(false)} variant="contained" size="large" fullWidth>
+            Skip Rest
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Snackbar
         open={snack.open}
         autoHideDuration={4000}
@@ -584,6 +767,8 @@ export default function Workout() {
           {snack.message}
         </Alert>
       </Snackbar>
+
+      <PlateCalculator open={plateCalcOpen} onClose={() => setPlateCalcOpen(false)} />
     </Box>
   );
 }

@@ -33,6 +33,7 @@ class PlanRequest(BaseModel):
     duration_seconds: Optional[int] = None
     avg_form_score: Optional[float] = None
     feedback_log: Optional[list[str]] = None
+    fatigue_level: Optional[int] = None
 
 
 # ─── Helpers ─────────────────────────────────────────────────────────────────────
@@ -51,6 +52,13 @@ def _build_prompt(username: str, level: str, streak: int, workout: dict) -> str:
         else "; ".join(set(feedback_items[:5]))
     )
 
+    fatigue = workout.get("fatigue_level")
+    fatigue_context = ""
+    if fatigue is not None:
+        fatigue_map = {1: "Exhausted/Severe Soreness", 2: "Tired/Sore", 3: "Normal", 4: "Good", 5: "Energetic/Fresh"}
+        f_desc = fatigue_map.get(fatigue, "Normal")
+        fatigue_context = f"\n- User's self-reported fatigue level today: {fatigue}/5 ({f_desc}). IMPORTANT: If fatigue is 1 or 2, recommend a Deload or active recovery session for their next workout."
+
     return f"""
 You are FitForge AI — a world-class personal trainer and sports nutritionist.
 
@@ -67,7 +75,7 @@ TODAY'S WORKOUT:
 - Reps completed: {reps}
 - Duration: {minutes} minutes
 - Average form score: {form_score}% (100% = perfect technique)
-- AI form feedback during workout: {feedback_str}
+- AI form feedback during workout: {feedback_str}{fatigue_context}
 
 Your task: Return a JSON object (no markdown, no code fences, raw JSON only) with EXACTLY this structure:
 {{

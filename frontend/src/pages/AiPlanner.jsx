@@ -3,6 +3,7 @@ import { useState } from "react";
 import {
   Box, Card, CardContent, Typography, Button, Grid, Chip,
   CircularProgress, Divider, LinearProgress, Alert, Collapse,
+  Slider
 } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
@@ -16,6 +17,8 @@ import LightbulbIcon from "@mui/icons-material/Lightbulb";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import BlockIcon from "@mui/icons-material/Block";
 import SnackingIcon from "@mui/icons-material/EmojiFoodBeverage";
+import BatteryChargingFullIcon from "@mui/icons-material/BatteryChargingFull";
+import BatteryAlertIcon from "@mui/icons-material/BatteryAlert";
 import { aiPlannerApi } from "../services/auth";
 
 // ─── Sub-components ──────────────────────────────────────────────────────────────
@@ -181,7 +184,7 @@ function LoadingScreen() {
             borderRadius: 99,
             bgcolor: "rgba(255,255,255,0.06)",
             "& .MuiLinearProgress-bar": {
-              background: "linear-gradient(90deg, #7C4DFF, #00E676)",
+              background: "linear-gradient(90deg, #A855F7, #10B981)",
               borderRadius: 99,
             },
           }}
@@ -197,13 +200,14 @@ export default function AiPlanner() {
   const [plan, setPlan] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fatigue, setFatigue] = useState(3);
 
   const handleGenerate = async () => {
     setLoading(true);
     setError("");
     setPlan(null);
     try {
-      const result = await aiPlannerApi.generatePlan();
+      const result = await aiPlannerApi.generatePlan({ fatigue_level: fatigue });
       if (result.success) {
         setPlan(result.plan);
       } else {
@@ -281,6 +285,32 @@ export default function AiPlanner() {
                 ))}
               </Box>
 
+              <Box sx={{ maxWidth: 400, mx: "auto", mb: 4, textAlign: "left" }}>
+                <Typography variant="body2" fontWeight={700} color="text.secondary" mb={1} display="flex" alignItems="center" gap={1}>
+                  <BatteryChargingFullIcon fontSize="small" /> How recovered do you feel today?
+                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                  <BatteryAlertIcon sx={{ color: "error.main", opacity: 0.7 }} />
+                  <Slider
+                    value={fatigue}
+                    onChange={(_, v) => setFatigue(v)}
+                    step={1}
+                    marks={[
+                      { value: 1, label: 'Exhausted' },
+                      { value: 2 },
+                      { value: 3, label: 'Normal' },
+                      { value: 4 },
+                      { value: 5, label: 'Fresh' },
+                    ]}
+                    min={1}
+                    max={5}
+                    valueLabelDisplay="auto"
+                    color="secondary"
+                  />
+                  <BatteryChargingFullIcon sx={{ color: "primary.main", opacity: 0.9 }} />
+                </Box>
+              </Box>
+
               <Button
                 id="generate-plan-btn"
                 variant="contained"
@@ -293,8 +323,8 @@ export default function AiPlanner() {
                   py: 1.5,
                   fontSize: "1rem",
                   fontWeight: 700,
-                  background: "linear-gradient(135deg, #7C4DFF, #00E676)",
-                  "&:hover": { background: "linear-gradient(135deg, #9d71ff, #29eb8a)" },
+                  background: "linear-gradient(135deg, #A855F7, #FF5722)",
+                  "&:hover": { background: "linear-gradient(135deg, #FF5722, #FF8A65)" },
                 }}
               >
                 Generate My Plan
@@ -383,23 +413,23 @@ export default function AiPlanner() {
           <Grid container spacing={3}>
             {/* Recovery */}
             <Grid item xs={12} md={6}>
-              <SectionCard icon={<DirectionsRunIcon fontSize="small" />} title="Recovery Plan" color="#00E676" delay={0.2}>
+              <SectionCard icon={<DirectionsRunIcon fontSize="small" />} title="Recovery Plan" color="#10B981" delay={0.2}>
                 <Typography variant="body2" color="text.secondary" mb={1.5} fontWeight={600}>
                   COOL-DOWN STRETCHES
                 </Typography>
-                <BulletList items={plan.recovery.cool_down} color="#00E676" />
+                <BulletList items={plan.recovery.cool_down} color="#10B981" />
                 <Divider sx={{ my: 2 }} />
                 <Typography variant="body2" color="text.secondary" mb={1} fontWeight={600}>REST ADVICE</Typography>
                 <Typography variant="body2" color="text.secondary" mb={1.5}>{plan.recovery.rest_recommendation}</Typography>
                 <Typography variant="body2" color="text.secondary" mb={1} fontWeight={600}>EXPECT SORENESS IN</Typography>
                 <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 1.5 }}>
                   {plan.recovery.soreness_areas.map((area) => (
-                    <Chip key={area} label={area} size="small" sx={{ bgcolor: "rgba(0,230,118,0.1)", color: "#00E676" }} />
+                    <Chip key={area} label={area} size="small" sx={{ bgcolor: "rgba(16,185,129,0.1)", color: "#10B981" }} />
                   ))}
                 </Box>
                 <Divider sx={{ my: 2 }} />
                 <Typography variant="body2" color="text.secondary" mb={1} fontWeight={600}>RECOVERY TIPS</Typography>
-                <BulletList items={plan.recovery.tips} color="#00E676" />
+                <BulletList items={plan.recovery.tips} color="#10B981" />
               </SectionCard>
             </Grid>
 
@@ -422,7 +452,7 @@ export default function AiPlanner() {
                   <Typography variant="body1" fontWeight={700} color="text.primary" mb={1.5}>
                     {plan.nutrition.post_workout_meal.description}
                   </Typography>
-                  <MacroBar label="Protein" value={plan.nutrition.post_workout_meal.protein_g} max={60} color="#00E676" />
+                  <MacroBar label="Protein" value={plan.nutrition.post_workout_meal.protein_g} max={60} color="#10B981" />
                   <MacroBar label="Carbs" value={plan.nutrition.post_workout_meal.carbs_g} max={120} color="#ffab40" />
                   <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 0.5 }}>
                     <Chip
@@ -479,7 +509,7 @@ export default function AiPlanner() {
 
             {/* Next Workout */}
             <Grid item xs={12}>
-              <SectionCard icon={<TrendingUpIcon fontSize="small" />} title="Next Workout Recommendation" color="#7C4DFF" delay={0.4}>
+              <SectionCard icon={<TrendingUpIcon fontSize="small" />} title="Next Workout Recommendation" color="#A855F7" delay={0.4}>
                 <Grid container spacing={3}>
                   <Grid item xs={12} sm={4}>
                     <Typography variant="body2" color="text.secondary" fontWeight={600} mb={0.5}>RECOMMENDED EXERCISE</Typography>

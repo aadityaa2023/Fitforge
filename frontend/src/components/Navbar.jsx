@@ -60,12 +60,11 @@ export default function Navbar() {
           <Typography
             variant="h6"
             sx={{
-              background: "linear-gradient(135deg,#00E676,#7C4DFF)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              fontWeight: 800,
+              color: "primary.main",
+              fontWeight: 900,
               flex: 1,
               fontSize: "1.3rem",
+              letterSpacing: "-0.02em",
             }}
           >
             FitForge
@@ -83,13 +82,14 @@ export default function Navbar() {
         <Box sx={{ p: open ? 2 : 1, display: "flex", alignItems: "center", gap: 1.5 }}>
           <Avatar
             sx={{
-              bgcolor: "primary.main",
-              color: "#000",
+              bgcolor: "primary.dark",
+              color: "#fff",
               fontWeight: 800,
               width: 40,
               height: 40,
               fontSize: "0.95rem",
               flexShrink: 0,
+              boxShadow: "0 2px 8px rgba(255, 87, 34, 0.4)",
             }}
           >
             {user.username?.[0]?.toUpperCase()}
@@ -128,18 +128,17 @@ export default function Navbar() {
                     px: open ? 2 : 1.5,
                     justifyContent: open ? "initial" : "center",
                     background: isActive
-                      ? "linear-gradient(135deg,rgba(0,230,118,0.15),rgba(124,77,255,0.1))"
+                      ? "rgba(255, 87, 34, 0.12)"
                       : highlight
-                      ? "rgba(124,77,255,0.08)"
+                      ? "rgba(255, 255, 255, 0.03)"
                       : "transparent",
                     border: isActive
-                      ? "1px solid rgba(0,230,118,0.25)"
+                      ? "1px solid rgba(255, 87, 34, 0.3)"
                       : highlight
-                      ? "1px solid rgba(124,77,255,0.2)"
+                      ? "1px solid rgba(255, 255, 255, 0.1)"
                       : "1px solid transparent",
                     "&:hover": {
-                      background: "rgba(0,230,118,0.08)",
-                      border: "1px solid rgba(0,230,118,0.15)",
+                      background: isActive ? "rgba(255, 87, 34, 0.2)" : "rgba(255, 255, 255, 0.05)",
                     },
                   }}
                 >
@@ -157,12 +156,19 @@ export default function Navbar() {
                   </ListItemIcon>
                   {open && (
                     <ListItemText
-                      primary={label}
-                      primaryTypographyProps={{
-                        fontWeight: isActive ? 700 : highlight ? 700 : 500,
-                        color: isActive ? "primary.main" : highlight ? "secondary.main" : "text.secondary",
-                        fontSize: "0.9rem",
-                      }}
+                      disableTypography
+                      primary={
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            fontWeight: isActive ? 700 : highlight ? 700 : 500,
+                            color: isActive ? "primary.main" : highlight ? "secondary.main" : "text.secondary",
+                            fontSize: "0.9rem",
+                          }}
+                        >
+                          {label}
+                        </Typography>
+                      }
                     />
                   )}
                 </ListItemButton>
@@ -193,8 +199,12 @@ export default function Navbar() {
               </ListItemIcon>
               {open && (
                 <ListItemText
-                  primary="Logout"
-                  primaryTypographyProps={{ color: "error.main", fontWeight: 600 }}
+                  disableTypography
+                  primary={
+                    <Typography sx={{ color: "error.main", fontWeight: 600 }}>
+                      Logout
+                    </Typography>
+                  }
                 />
               )}
             </ListItemButton>

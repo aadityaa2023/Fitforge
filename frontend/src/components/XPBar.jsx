@@ -14,7 +14,7 @@ export default function XPBar({ xp = 0, level = 0, levelName = "Beginner", xpToN
   const xpInCurrentLevel = xp - currentLevelMinXp;
   const xpNeeded = xpToNext ? xpToNext - currentLevelMinXp : xpInCurrentLevel || 1;
   const progress = xpToNext ? Math.min((xpInCurrentLevel / xpNeeded) * 100, 100) : 100;
-  const levelColor = LEVEL_COLORS[levelName] || "#00E676";
+  const levelColor = LEVEL_COLORS[levelName] || "#FF5722";
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -56,7 +56,7 @@ export default function XPBar({ xp = 0, level = 0, levelName = "Beginner", xpToN
             borderRadius: 99,
             bgcolor: "rgba(255,255,255,0.06)",
             "& .MuiLinearProgress-bar": {
-              background: `linear-gradient(90deg, ${levelColor}, #00E676)`,
+              background: `linear-gradient(90deg, ${levelColor}, #FF5722)`,
             },
           }}
         />

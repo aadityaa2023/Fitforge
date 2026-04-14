@@ -81,10 +81,10 @@ export default function Progress() {
       {/* Lifetime stats */}
       <Grid container spacing={2.5} sx={{ mb: 4 }}>
         <Grid item xs={6} sm={3}>
-          <StatsCard label="Total Workouts" value={stats?.total_workouts} icon={<FitnessCenterIcon fontSize="large" />} color="#7C4DFF" delay={0.1} />
+          <StatsCard label="Total Workouts" value={stats?.total_workouts} icon={<FitnessCenterIcon fontSize="large" />} color="#A855F7" delay={0.1} />
         </Grid>
         <Grid item xs={6} sm={3}>
-          <StatsCard label="Total Reps" value={stats?.total_reps} icon={<LoopIcon fontSize="large" />} color="#00E676" delay={0.15} />
+          <StatsCard label="Total Reps" value={stats?.total_reps} icon={<LoopIcon fontSize="large" />} color="#10B981" delay={0.15} />
         </Grid>
         <Grid item xs={6} sm={3}>
           <StatsCard label="Total XP" value={stats?.total_xp} icon={<BoltIcon fontSize="large" />} color="#ffab40" delay={0.2} />
@@ -117,8 +117,8 @@ export default function Progress() {
                   <Bar dataKey="reps" fill="url(#repGradient)" radius={[6, 6, 0, 0]} />
                   <defs>
                     <linearGradient id="repGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#00E676" stopOpacity={0.9} />
-                      <stop offset="100%" stopColor="#00b248" stopOpacity={0.6} />
+                      <stop offset="0%" stopColor="#10B981" stopOpacity={0.9} />
+                      <stop offset="100%" stopColor="#059669" stopOpacity={0.6} />
                     </linearGradient>
                   </defs>
                 </BarChart>
@@ -140,8 +140,8 @@ export default function Progress() {
                 <AreaChart data={weekly} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
                   <defs>
                     <linearGradient id="xpGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#7C4DFF" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#7C4DFF" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#A855F7" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#A855F7" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
@@ -152,7 +152,7 @@ export default function Progress() {
                     type="monotone"
                     dataKey="xp_earned"
                     name="XP"
-                    stroke="#7C4DFF"
+                    stroke="#A855F7"
                     strokeWidth={2.5}
                     fill="url(#xpGradient)"
                   />

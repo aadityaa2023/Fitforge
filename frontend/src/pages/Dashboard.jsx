@@ -21,10 +21,10 @@ import EmojiEventsIcon2 from "@mui/icons-material/EmojiEvents";
 import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
 
 const EXERCISE_META = {
-  squat:  { label: "Squats",     icon: <DirectionsRunIcon />, color: "#7C4DFF" },
-  pushup: { label: "Push-Ups",   icon: <FitnessCenterIcon />, color: "#00E676" },
-  lunge:  { label: "Lunges",     icon: <DirectionsRunIcon />, color: "#ff9800" },
-  curl:   { label: "Bicep Curls",icon: <FitnessCenterIcon />, color: "#2196f3" },
+  squat:  { label: "Squats",     icon: <DirectionsRunIcon />, color: "#A855F7" },
+  pushup: { label: "Push-Ups",   icon: <FitnessCenterIcon />, color: "#10B981" },
+  lunge:  { label: "Lunges",     icon: <DirectionsRunIcon />, color: "#FF5722" },
+  curl:   { label: "Bicep Curls",icon: <FitnessCenterIcon />, color: "#3B82F6" },
 };
 
 function StatCard({ label, value, icon, color, delay = 0 }) {
@@ -48,7 +48,7 @@ function StatCard({ label, value, icon, color, delay = 0 }) {
                 width: 48,
                 height: 48,
                 borderRadius: 2,
-                bgcolor: `${color || "#00E676"}18`,
+                bgcolor: `${color || "#FF5722"}18`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -136,16 +136,16 @@ export default function Dashboard() {
       {/* Stats grid */}
       <Grid container spacing={2.5} sx={{ mb: 3 }}>
         <Grid item xs={6} sm={3}>
-          <StatCard label="Total XP" value={(profile?.xp ?? 0).toLocaleString()} icon={<BoltIcon />} color="#ffab40" delay={0.15} />
+          <StatCard label="Total XP" value={(profile?.xp ?? 0).toLocaleString()} icon={<BoltIcon />} color="#FFB300" delay={0.15} />
         </Grid>
         <Grid item xs={6} sm={3}>
-          <StatCard label="Level" value={profile?.level_name ?? "Beginner"} icon={<WorkspacePremiumIcon />} color="#7C4DFF" delay={0.2} />
+          <StatCard label="Level" value={profile?.level_name ?? "Beginner"} icon={<WorkspacePremiumIcon />} color="#A855F7" delay={0.2} />
         </Grid>
         <Grid item xs={6} sm={3}>
-          <StatCard label="Day Streak" value={`${profile?.streak ?? 0}`} icon={<LocalFireDepartmentIcon />} color="#ff9800" delay={0.25} />
+          <StatCard label="Day Streak" value={`${profile?.streak ?? 0}`} icon={<LocalFireDepartmentIcon />} color="#FF5722" delay={0.25} />
         </Grid>
         <Grid item xs={6} sm={3}>
-          <StatCard label="Achievements" value={`${profile?.achievements?.length ?? 0}/8`} icon={<EmojiEventsIcon2 />} color="#00E676" delay={0.3} />
+          <StatCard label="Achievements" value={`${profile?.achievements?.length ?? 0}/8`} icon={<EmojiEventsIcon2 />} color="#10B981" delay={0.3} />
         </Grid>
       </Grid>
 
@@ -246,7 +246,7 @@ export default function Dashboard() {
                         <Chip
                           label={`+${w.xp_earned} XP`}
                           size="small"
-                          sx={{ bgcolor: "rgba(0,230,118,0.12)", color: "primary.main", fontWeight: 700 }}
+                          sx={{ bgcolor: "rgba(255, 87, 34, 0.12)", color: "primary.main", fontWeight: 700 }}
                         />
                       </Box>
                     );
