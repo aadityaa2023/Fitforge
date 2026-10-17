@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { authApi } from '@/lib/apiClient';
 
 const AuthContext = createContext(null);
@@ -34,12 +34,12 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
-  const refreshUser = async () => {
+  const refreshUser = useCallback(async () => {
     try {
       const me = await authApi.getMe();
       setUser(me);
     } catch (_) {}
-  };
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, loading, loginWithGoogle, logout, refreshUser }}>

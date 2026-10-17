@@ -56,12 +56,25 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
-    Promise.all([gamificationApi.getProfile(), workoutApi.getHistory(1, 5), refreshUser()])
-      .then(([prof, hist]) => { setProfile(prof); setHistory(hist); })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [user, refreshUser]);
+    let isMounted = true;
+    Promise.all([gamificationApi.getProfile(), workoutApi.getHistory(1, 5)])
+      .then(([prof, hist]) => {
+        if (isMounted) {
+          setProfile(prof);
+          setHistory(hist);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to load dashboard data:', err);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const xpToNext = profile?.xp_to_next_level;
   const currentXpMin = profile?.current_level_min_xp ?? 0;

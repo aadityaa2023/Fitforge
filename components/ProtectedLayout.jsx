@@ -40,7 +40,8 @@ export default function ProtectedLayout({ children }) {
           minHeight: '100vh',
           display: 'flex',
           flexDirection: 'column',
-          overflow: 'hidden'
+          overflowX: 'hidden',
+          overflowY: 'auto'
         }}
       >
         {children}
