@@ -7,6 +7,7 @@ import {
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '@/context/AuthContext';
+import StravaBrandLogo from '@/components/StravaBrandLogo';
 
 const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
@@ -53,139 +54,189 @@ export default function LoginPage() {
     <Box
       sx={{
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        flexDirection: 'column',
         minHeight: '100vh',
-        backgroundColor: '#0a0a0f',
-        px: 3,
-        py: 4,
+        position: 'relative',
+        backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.65)), url("/gym-bg.jpg")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
       }}
     >
+      {/* Strava-style Top Header Bar */}
       <Box
         sx={{
           width: '100%',
-          maxWidth: 420,
+          py: 2,
+          px: { xs: 2.5, sm: 4 },
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
-          textAlign: 'center',
+          justifyContent: 'space-between',
+          backgroundColor: 'rgba(255, 255, 255, 0.98)',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          zIndex: 10,
         }}
       >
-        {/* Title */}
-        <Typography
-          variant="h3"
-          sx={{
-            fontWeight: 800,
-            color: '#ffffff',
-            letterSpacing: '-0.02em',
-            mb: 1.5,
-            fontSize: { xs: '2.2rem', sm: '2.5rem' },
-          }}
-        >
-          Get Started
-        </Typography>
-
-        {/* Subtitle */}
-        <Typography
-          variant="body1"
-          sx={{
-            color: '#9ca3af',
-            lineHeight: 1.5,
-            mb: 4.5,
-            maxWidth: 340,
-            fontSize: '1rem',
-          }}
-        >
-          Sign in or create your FitForge account instantly with Google.
-        </Typography>
-
-        {/* Error message */}
-        {error && (
-          <Alert severity="error" sx={{ mb: 3, width: '100%', borderRadius: 2 }}>
-            {error}
-          </Alert>
-        )}
-
-        {/* Missing client ID notice if applicable */}
-        {!clientId && (
-          <Alert severity="warning" sx={{ mb: 3, width: '100%', borderRadius: 2 }}>
-            Google Client ID missing in <code>.env.local</code>
-          </Alert>
-        )}
-
-        {/* Google Button */}
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            minHeight: 52,
-            mb: 4,
-          }}
-        >
-          {loading ? (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <CircularProgress size={24} sx={{ color: 'primary.main' }} />
-              <Typography variant="body2" sx={{ color: '#9ca3af' }}>
-                Signing in with Google...
-              </Typography>
-            </Box>
-          ) : clientId ? (
-            <Box
-              sx={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                '& > div': { width: '100% !important' },
-                '& iframe': { margin: '0 auto !important' },
-              }}
-            >
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={handleGoogleError}
-                useOneTap={false}
-                theme="filled_black"
-                size="large"
-                text="continue_with"
-                shape="rectangular"
-                width={360}
-              />
-            </Box>
-          ) : null}
+        <StravaBrandLogo size="medium" href="/" />
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Typography
+            component="a"
+            href="/"
+            variant="body2"
+            sx={{
+              color: '#333',
+              textDecoration: 'none',
+              fontWeight: 600,
+              fontSize: '0.9rem',
+              '&:hover': { color: '#FC5200' },
+            }}
+          >
+            ← Back to Home
+          </Typography>
         </Box>
+      </Box>
 
-        {/* Divider line */}
+      {/* Main Centered Login Container */}
+      <Box
+        sx={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          px: 2,
+          py: 6,
+          zIndex: 1,
+        }}
+      >
         <Box
           sx={{
             width: '100%',
-            height: '1px',
-            backgroundColor: 'rgba(255, 255, 255, 0.08)',
-            mb: 3,
-          }}
-        />
-
-        {/* Footer info: One-click sign up & login */}
-        <Box
-          sx={{
+            maxWidth: 420,
+            backgroundColor: 'rgba(15, 15, 15, 0.92)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '8px',
+            p: { xs: 3, sm: 4.5 },
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
-            gap: 1,
-            color: '#9ca3af',
+            textAlign: 'center',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.6)',
           }}
         >
-          <ShieldOutlinedIcon sx={{ fontSize: 18, color: '#9ca3af' }} />
+          {/* Header Title */}
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: 800,
+              color: '#ffffff',
+              letterSpacing: '-0.01em',
+              mb: 1,
+              fontSize: { xs: '1.75rem', sm: '2rem' },
+            }}
+          >
+            Log In
+          </Typography>
+
           <Typography
             variant="body2"
             sx={{
-              color: '#d1d5db',
-              fontSize: '0.875rem',
-              fontWeight: 500,
+              color: 'rgba(255, 255, 255, 0.7)',
+              mb: 3.5,
+              fontSize: '0.9rem',
             }}
           >
-            One-click sign up &amp; login • No password required
+            Sign in to track workouts and compete with athletes.
           </Typography>
+
+          {/* Error message */}
+          {error && (
+            <Alert severity="error" sx={{ mb: 3, width: '100%', borderRadius: 1.5, textAlign: 'left' }}>
+              {error}
+            </Alert>
+          )}
+
+          {/* Missing client ID notice if applicable */}
+          {!clientId && (
+            <Alert severity="warning" sx={{ mb: 3, width: '100%', borderRadius: 1.5, textAlign: 'left' }}>
+              Google Client ID missing in <code>.env.local</code>
+            </Alert>
+          )}
+
+          {/* Google Button */}
+          <Box
+            sx={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              minHeight: 52,
+              mb: 3.5,
+            }}
+          >
+            {loading ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <CircularProgress size={24} sx={{ color: '#FC5200' }} />
+                <Typography variant="body2" sx={{ color: '#ffffff' }}>
+                  Signing in with Google...
+                </Typography>
+              </Box>
+            ) : clientId ? (
+              <Box
+                sx={{
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  '& > div': { width: '100% !important' },
+                  '& iframe': { margin: '0 auto !important' },
+                }}
+              >
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleError}
+                  useOneTap={false}
+                  theme="filled_blue"
+                  size="large"
+                  text="signin_with"
+                  shape="rectangular"
+                  width="100%"
+                />
+              </Box>
+            ) : null}
+          </Box>
+
+          {/* Subtle separator */}
+          <Box
+            sx={{
+              width: '100%',
+              height: '1px',
+              backgroundColor: 'rgba(255, 255, 255, 0.12)',
+              mb: 3,
+            }}
+          />
+
+          {/* Guarantee / Security info */}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 1,
+              color: 'rgba(255, 255, 255, 0.6)',
+            }}
+          >
+            <ShieldOutlinedIcon sx={{ fontSize: 17, color: '#FC5200' }} />
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'rgba(255, 255, 255, 0.75)',
+                fontSize: '0.8rem',
+                fontWeight: 500,
+              }}
+            >
+              One-click sign up &amp; login • No password required
+            </Typography>
+          </Box>
         </Box>
       </Box>
     </Box>

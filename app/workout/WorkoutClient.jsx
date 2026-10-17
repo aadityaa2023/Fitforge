@@ -400,7 +400,7 @@ export default function WorkoutClient() {
           id="workout-summary-dialog"
           open={summaryOpen}
           onClose={() => setSummaryOpen(false)}
-          PaperProps={{ sx: { borderRadius: 4, minWidth: 340, background: 'rgba(18,18,26,0.99)', border: '1px solid rgba(0,230,118,0.2)' } }}
+          slotProps={{ paper: { sx: { borderRadius: 4, minWidth: 340, background: 'rgba(18,18,26,0.99)', border: '1px solid rgba(0,230,118,0.2)' } } }}
         >
           <DialogTitle sx={{ textAlign: 'center', pt: 3 }}>
             <Typography variant="h5" fontWeight={800}>Workout Complete! 🎉</Typography>
@@ -449,7 +449,7 @@ export default function WorkoutClient() {
         <Dialog
           open={restTimerOpen}
           onClose={() => stopRest(false)}
-          PaperProps={{ sx: { background: 'rgba(18,18,26,0.98)', borderRadius: 4, minWidth: 280, textAlign: 'center', p: 2 } }}
+          slotProps={{ paper: { sx: { background: 'rgba(18,18,26,0.98)', borderRadius: 4, minWidth: 280, textAlign: 'center', p: 2 } } }}
         >
           <DialogTitle sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'center' }}>
             <HourglassEmptyIcon sx={{ fontSize: 40, color: 'secondary.main' }} />
