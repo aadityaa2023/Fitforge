@@ -21,16 +21,8 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const login = async (email, password) => {
-    const { access_token } = await authApi.login(email, password);
-    localStorage.setItem('fitforge_token', access_token);
-    const me = await authApi.getMe();
-    setUser(me);
-    return me;
-  };
-
-  const register = async (username, email, password) => {
-    const { access_token } = await authApi.register(username, email, password);
+  const loginWithGoogle = async (credential) => {
+    const { access_token } = await authApi.loginWithGoogle(credential);
     localStorage.setItem('fitforge_token', access_token);
     const me = await authApi.getMe();
     setUser(me);
@@ -50,7 +42,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, loginWithGoogle, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

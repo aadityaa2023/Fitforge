@@ -22,7 +22,9 @@ export async function GET(req) {
     return NextResponse.json({
       id: user._id.toString(),
       username: user.username,
+      name: user.name || user.username,
       email: user.email,
+      avatar: user.avatar || '',
       xp,
       level,
       level_name,

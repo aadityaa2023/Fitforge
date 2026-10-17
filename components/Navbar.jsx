@@ -80,6 +80,7 @@ export default function Navbar() {
       {user && (
         <Box sx={{ p: open ? 2 : 1, display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Avatar
+            src={user.avatar || undefined}
             sx={{
               bgcolor: 'primary.dark', color: '#fff', fontWeight: 800,
               width: 40, height: 40, fontSize: '0.95rem', flexShrink: 0,

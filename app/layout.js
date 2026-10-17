@@ -7,6 +7,8 @@ import './globals.css';
 import MuiProvider from '@/components/MuiProvider';
 import { AuthProvider } from '@/context/AuthContext';
 
+import GoogleAuthProvider from '@/components/GoogleAuthProvider';
+
 export const metadata = {
   title: 'FitForge — AI-Powered Workout Coach',
   description:
@@ -20,7 +22,9 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <MuiProvider>
-          <AuthProvider>{children}</AuthProvider>
+          <GoogleAuthProvider>
+            <AuthProvider>{children}</AuthProvider>
+          </GoogleAuthProvider>
         </MuiProvider>
       </body>
     </html>
