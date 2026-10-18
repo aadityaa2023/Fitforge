@@ -15,11 +15,13 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import ScienceIcon from '@mui/icons-material/Science';
 import { useAuth } from '@/context/AuthContext';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
   { label: 'Workout', icon: <FitnessCenterIcon />, path: '/workout' },
+  { label: 'AI Video Test', icon: <ScienceIcon />, path: '/workout/test' },
   { label: 'AI Planner', icon: <AutoAwesomeIcon />, path: '/ai-planner', highlight: true },
   { label: 'Progress', icon: <ShowChartIcon />, path: '/progress' },
   { label: 'Achievements', icon: <EmojiEventsIcon />, path: '/achievements' },

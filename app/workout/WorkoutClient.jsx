@@ -6,6 +6,7 @@
  */
 import { useState, useRef, useCallback, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 import {
   Box, Grid, Card, CardContent, Typography, Button, Select,
   MenuItem, FormControl, InputLabel, Divider, Chip, CircularProgress,
@@ -25,6 +26,7 @@ import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import TimerIcon from '@mui/icons-material/Timer';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import ScienceIcon from '@mui/icons-material/Science';
 import { motion } from 'framer-motion';
 import CameraFeed from '@/components/CameraFeed';
 import RepCounter from '@/components/RepCounter';
@@ -216,7 +218,30 @@ export default function WorkoutClient() {
             <Typography variant="h4" fontWeight={800}>AI Workout Coach</Typography>
             <Typography color="text.secondary">Real-time pose analysis &amp; rep counting — 100% in-browser via TensorFlow.js</Typography>
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+            {/* Test Video Mode button */}
+            <Link href="/workout/test" style={{ textDecoration: 'none' }}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                size="small"
+                startIcon={<ScienceIcon />}
+                sx={{
+                  borderRadius: 99,
+                  px: 2,
+                  py: 0.75,
+                  fontWeight: 700,
+                  borderColor: 'rgba(124, 77, 255, 0.4)',
+                  bgcolor: 'rgba(124, 77, 255, 0.08)',
+                  '&:hover': {
+                    bgcolor: 'rgba(124, 77, 255, 0.18)',
+                    borderColor: 'secondary.main',
+                  },
+                }}
+              >
+                Test with Videos
+              </Button>
+            </Link>
             {/* Voice toggle */}
             <Tooltip title={voiceEnabled ? 'Voice Coach ON — click to mute' : 'Voice Coach OFF'}>
               <Box

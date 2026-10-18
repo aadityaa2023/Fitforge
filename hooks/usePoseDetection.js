@@ -52,7 +52,7 @@ async function loadPoseDetectionLib() {
  * @param {function} onPose           — callback(keypoints, score) on each frame
  * @param {'Lightning'|'Thunder'} variant — speed vs accuracy tradeoff
  */
-export function usePoseDetection(videoRef, active, onPose, variant = 'Lightning') {
+export function usePoseDetection(videoRef, active, onPose, variant = 'Lightning', flipHorizontal = true) {
   const detectorRef = useRef(null);
   const rafRef = useRef(null);
   const [modelState, setModelState] = useState('idle'); // idle | loading | ready | error
@@ -103,7 +103,7 @@ export function usePoseDetection(videoRef, active, onPose, variant = 'Lightning'
     try {
       const poses = await detector.estimatePoses(video, {
         maxPoses: 1,
-        flipHorizontal: true, // mirror for selfie-camera UX
+        flipHorizontal: flipHorizontal,
       });
 
       if (poses.length > 0 && poses[0].keypoints) {
@@ -124,7 +124,7 @@ export function usePoseDetection(videoRef, active, onPose, variant = 'Lightning'
     }
 
     rafRef.current = requestAnimationFrame(runLoop);
-  }, [active, videoRef, onPose]);
+  }, [active, videoRef, onPose, flipHorizontal]);
 
   useEffect(() => {
     if (modelState !== 'ready') return;
